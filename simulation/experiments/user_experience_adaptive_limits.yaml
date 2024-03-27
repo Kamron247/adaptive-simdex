@@ -16,12 +16,12 @@ workers:
   - active: true
     limit-min: 30.0
     limit: 30.0
-    agression: 10.0
+    aggression: 10.0
     dynamic-limit: true
   - active: true
     limit-min: 30.0
     limit: 30.0
-    agression: 10.0
+    aggression: 10.0
     dynamic-limit: true
   - active: true
     limit: 30.0

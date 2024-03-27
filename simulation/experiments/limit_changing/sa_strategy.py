@@ -2,13 +2,13 @@ from interfaces import AbstractSelfAdaptingStrategy
 from logger import logWorkers, sampleLog
 
 def decrease_worker_limit(adaptive_worker):
-        if adaptive_worker.get_attribute("limit")-adaptive_worker.get_attribute("agression") < adaptive_worker.get_attribute("limit-min"):
+        if adaptive_worker.get_attribute("limit")-adaptive_worker.get_attribute("aggression") < adaptive_worker.get_attribute("limit-min"):
             adaptive_worker.set_attribute("limit", adaptive_worker.get_attribute("limit-min"))
         else:
-            adaptive_worker.set_attribute("limit", adaptive_worker.get_attribute("limit")-(adaptive_worker.get_attribute("agression")*.75))
+            adaptive_worker.set_attribute("limit", adaptive_worker.get_attribute("limit")-(adaptive_worker.get_attribute("aggression")*.75))
     
 def increase_worker_limit(worker):
-    worker.set_attribute("limit", worker.get_attribute("limit")+worker.get_attribute("agression"))
+    worker.set_attribute("limit", worker.get_attribute("limit")+worker.get_attribute("aggression"))
 
 
 
