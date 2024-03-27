@@ -49,7 +49,7 @@ class LimitChangingCategorySelfAdaptingStrategy(AbstractSelfAdaptingStrategy):
 
         for i in range(len(workers)):
             worker = workers[i]
-            if worker.get_attribute("adaptive-limit"):
+            if worker.get_attribute("dynamic-limit"):
                 adaptive_limits.append(worker)
             if worker.jobs_count() > 1:
                 overloaded.append(worker)
