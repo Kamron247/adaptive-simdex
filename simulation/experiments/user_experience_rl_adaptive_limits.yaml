@@ -34,7 +34,7 @@ dispatcher: experiments.limit_changing.dispatcher.LimitChangingJobCategoryDispat
 
 # self-adapting strategy component (same format as dispatcher)
 sa_strategy:
-  class: experiments.limit_changing.heuristic.heuristic_sa_strategy.LimitChangingCategorySelfAdaptingStrategy
+  class: experiments.limit_changing.rl.rl_sa_strategy.ReinforcementLearningLimitChangingSelfAdaptingStrategy
   args:
     - 2  # max. number of long worker queues
     - "@@ref_jobs"
