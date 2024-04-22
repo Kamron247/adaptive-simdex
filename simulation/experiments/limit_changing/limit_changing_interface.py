@@ -1,5 +1,5 @@
 from interfaces import AbstractSelfAdaptingStrategy
-
+from rich.progress import Progress, TextColumn, BarColumn, MofNCompleteColumn, TimeRemainingColumn, Column
 
 class DynamicLimitAbstractSelfAdaptingStrategy(AbstractSelfAdaptingStrategy):
     """Represents the controller used for self-adaptation of the system.
@@ -21,6 +21,26 @@ class DynamicLimitAbstractSelfAdaptingStrategy(AbstractSelfAdaptingStrategy):
 
     def init(self, ts, dispatcher, workers):
         self._update_dispatcher(ts, dispatcher)
+        self.progressBars = {}
+        self.progress =  Progress(TextColumn("[progress.description]{task.description}"), BarColumn(), MofNCompleteColumn(), TextColumn("Jobs: {task.fields[jobs]}"))
+        i = 1
+       
+        for worker in workers:
+            
+            if (worker.get_attribute("limit-max") is not None):
+                task = self.progress.add_task(f"[cyan]Dynamic Limit Worker {i}", total=worker.get_attribute("limit-max"), jobs=0)
+                self.progressBars[worker] = task
+            elif (worker.get_attribute("limit") is not None):
+                task = self.progress.add_task(f"Static Limit Worker {i}", total=worker.get_attribute("limit"), jobs=0)
+                self.progress.update(task, completed=worker.get_attribute("limit") )
+                self.progressBars[worker] = task
+            else:
+                task = self.progress.add_task(f"Infinite Limit Worker {i}", total=0, jobs=0)
+                self.progress.update(task, completed=0)
+                self.progressBars[worker] = task
+            i+=1
+        self.progress.start()
+
 
 
     def get_updateable_workers(self, workers):
@@ -42,6 +62,11 @@ class DynamicLimitAbstractSelfAdaptingStrategy(AbstractSelfAdaptingStrategy):
     def update_worker_limit(self, worker, other_workers):
         raise NotImplementedError
     
+
+    def render(self, workers):
+        for worker in workers:
+            self.progress.update(self.progressBars[worker], completed=worker.get_attribute("limit"), jobs=worker.jobs_count())
+
     
 
     def do_adapt(self, ts, dispatcher, workers, job=None):
@@ -58,7 +83,8 @@ class DynamicLimitAbstractSelfAdaptingStrategy(AbstractSelfAdaptingStrategy):
         updateable_workers = self.get_updateable_workers(workers)
         for worker in updateable_workers:
             self.update_worker_limit(worker, workers)
-
         if (job and job.compilation_ok):
            dispatcher.add_ref_job(job)
+        self.render(workers)
+
     
