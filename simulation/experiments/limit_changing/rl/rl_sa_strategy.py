@@ -17,10 +17,14 @@ class ReinforcementLearningLimitChangingSelfAdaptingStrategy(DynamicLimitAbstrac
     If there is an empty larger queue decrease the limit by x seconds
     """
 
-    def __init__(self, max_long_queues, ref_jobs):
+    def __init__(self, max_long_queues, ref_jobs, *args):
         super().__init__(max_long_queues, ref_jobs)
-        self.brain = Brain()
+        
         self.previous_moves = dict()
+        self.arguments = args[0]
+        self.brain = Brain(self.arguments["gamma"], self.arguments["alpha"])
+        if "remember" in self.arguments.keys() and self.arguments["remember"] == True:
+            self.brain.remember(self.arguments["filename"])
 
 
     def get_overloaded_workers(self, workers):
@@ -30,8 +34,8 @@ class ReinforcementLearningLimitChangingSelfAdaptingStrategy(DynamicLimitAbstrac
         return filter(lambda w: w.jobs_count == 0, workers)
     
     def update_worker_limit(self, worker, all_workers):
-
-        if worker in self.previous_moves.keys() and self.previous_moves[worker] is not None:
+        learn = "learn" in self.arguments.keys() and self.arguments["learn"]
+        if learn and worker in self.previous_moves.keys() and self.previous_moves[worker] is not None:
             self.learn_from_previous_move(worker, all_workers)
 
         worker_state = QueueState(worker, all_workers)
@@ -42,7 +46,8 @@ class ReinforcementLearningLimitChangingSelfAdaptingStrategy(DynamicLimitAbstrac
         elif action == DECREASE:
             self.decrease_worker_limit(worker)
 
-        self.previous_moves[worker] = [worker_state, action]
+        if(learn):
+            self.previous_moves[worker] = [worker_state, action]
 
         logWorkers(all_workers)
 
@@ -52,15 +57,22 @@ class ReinforcementLearningLimitChangingSelfAdaptingStrategy(DynamicLimitAbstrac
         action = self.previous_moves[worker][1]
 
 
-        if new_state.value() == 0 and old_state.value() == 0 and action == INCREASE:
-            reward = -1
+        if new_state.value() == 0:
+            reward = 100
         else:
-            reward = old_state.value() - new_state.value()
+            reward = -1
 
+        # if new_state.value() == 0 and old_state.value() == 0 and action == INCREASE:
+        #     reward = -1
+        # else:
+        #     reward = old_state.value() - new_state.value()
 
         self.brain.learn(new_state, old_state, action, reward)
         self.previous_moves[worker] = None
               
-
+    def close(self):
+        super().close()
+        if "memorize" in self.arguments and self.arguments["memorize"] is True:
+            self.brain.memorize(self.arguments["filename"])
     
  

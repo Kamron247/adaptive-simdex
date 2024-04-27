@@ -62,6 +62,9 @@ class AbstractSelfAdaptingStrategy:
         so the user may design whatever interface is necessary between these two modules.
         """
         raise NotImplementedError
+    
+    def close(self):
+        pass
 
 
 def create_component(class_name, constructor_args={}):

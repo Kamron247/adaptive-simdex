@@ -127,3 +127,4 @@ class Simulation:
                 if worker_end_ts:
                     end_ts = max(end_ts, worker.get_finish_ts())
             self.__advance_time(end_ts + self.sa_period)
+            self.sa_strategy.close()
