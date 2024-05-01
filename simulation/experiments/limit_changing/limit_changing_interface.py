@@ -50,7 +50,7 @@ class DynamicLimitAbstractSelfAdaptingStrategy(AbstractSelfAdaptingStrategy):
         if adaptive_worker.get_attribute("limit")-adaptive_worker.get_attribute("aggression") < adaptive_worker.get_attribute("limit-min"):
             adaptive_worker.set_attribute("limit", adaptive_worker.get_attribute("limit-min"))
         else:
-            adaptive_worker.set_attribute("limit", adaptive_worker.get_attribute("limit")-(adaptive_worker.get_attribute("aggression")*.75))
+            adaptive_worker.set_attribute("limit", adaptive_worker.get_attribute("limit")-(adaptive_worker.get_attribute("aggression")))
     
     def increase_worker_limit(self, adaptive_worker):
         if adaptive_worker.get_attribute("limit")+adaptive_worker.get_attribute("aggression") > adaptive_worker.get_attribute("limit-max"):
@@ -58,6 +58,15 @@ class DynamicLimitAbstractSelfAdaptingStrategy(AbstractSelfAdaptingStrategy):
         else:
             adaptive_worker.set_attribute("limit", adaptive_worker.get_attribute("limit")+adaptive_worker.get_attribute("aggression"))
 
+    def set_worker_limit(self, adaptive_worker, set_value):
+        if adaptive_worker.get_attribute("limit-max") < set_value:
+            adaptive_worker.set_attribute("limit", adaptive_worker.get_attribute("limit-max")) 
+
+        elif adaptive_worker.get_attribute("limit-min") > set_value:
+            adaptive_worker.set_attribute("limit", adaptive_worker.get_attribute("limit-min")) 
+
+        else:
+            adaptive_worker.set_attribute("limit", set_value) 
 
     def update_worker_limit(self, worker, other_workers):
         raise NotImplementedError

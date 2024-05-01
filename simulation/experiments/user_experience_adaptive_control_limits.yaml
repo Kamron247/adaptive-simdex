@@ -15,13 +15,13 @@ workers:
   - active: true
   - active: true
     limit-min: 30.0
-    limit-max: 2000.0
+    limit-max: 1000.0
     limit: 30.0
     aggression: 10.0
     dynamic-limit: true
   - active: true
     limit-min: 30.0
-    limit-max: 2000.0
+    limit-max: 1000.0
     limit: 30.0
     aggression: 10.0
     dynamic-limit: true
@@ -34,16 +34,10 @@ dispatcher: experiments.limit_changing.dispatcher.LimitChangingJobCategoryDispat
 
 # self-adapting strategy component (same format as dispatcher)
 sa_strategy:
-  class: experiments.limit_changing.rl.rl_sa_strategy.ReinforcementLearningLimitChangingSelfAdaptingStrategy
+  class: experiments.limit_changing.control.control_sa_strategy.LimitChangingCategorySelfAdaptingStrategy
   args:
     - 2  # max. number of long worker queues
     - "@@ref_jobs"
-    - gamma: 0.8
-      alpha: 0.2
-      memorize: true
-      learn: true
-      remember: true
-      filename: "experiments/limit_changing/rl/policies/output.csv"
 period: 60  # in seconds, how often a sa strategy (MAPE-K loop) is invoked
 
 # list of metric components (each one is in the same format as dispatcher)
