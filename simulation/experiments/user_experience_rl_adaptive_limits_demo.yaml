@@ -15,13 +15,13 @@ workers:
   - active: true
   - active: true
     limit-min: 30.0
-    limit-max: 2000.0
+    limit-max: 1000.0
     limit: 30.0
     aggression: 10.0
     dynamic-limit: true
   - active: true
     limit-min: 30.0
-    limit-max: 2000.0
+    limit-max: 1000.0
     limit: 30.0
     aggression: 10.0
     dynamic-limit: true
@@ -43,7 +43,7 @@ sa_strategy:
       memorize: false
       learn: true
       remember: true
-      filename: "experiments/limit_changing/rl/policies/output.csv"
+      filename: "experiments/limit_changing/rl/policies/output-overloadedState-4787.csv"
 period: 60  # in seconds, how often a sa strategy (MAPE-K loop) is invoked
 
 # list of metric components (each one is in the same format as dispatcher)
