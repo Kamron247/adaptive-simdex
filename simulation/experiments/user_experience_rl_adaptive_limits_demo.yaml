@@ -40,7 +40,7 @@ sa_strategy:
     - "@@ref_jobs"
     - gamma: 0.8
       alpha: 0.2
-      memorize: true
+      memorize: false
       learn: true
       remember: true
       filename: "experiments/limit_changing/rl/policies/output.csv"
